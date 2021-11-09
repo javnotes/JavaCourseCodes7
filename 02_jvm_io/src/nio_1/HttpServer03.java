@@ -18,6 +18,9 @@ public class HttpServer03 {
     public static void main(String[] args) throws IOException {
         final int port = 8803;
 
+        // Executors.newFixedThreadPool()创建一个线程池，该池重用固定数量的线程在共享的无界队列中运行
+        // Runtime.getRuntime()：与当前 Java 应用程序关联的 Runtime 对象。
+        // availableProcessors()：返回 Java 虚拟机可用的处理器数。
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4);
 
         final ServerSocket serverSocket = new ServerSocket(port);
