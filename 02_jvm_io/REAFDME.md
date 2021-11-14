@@ -20,7 +20,7 @@
 
 ## ParallelGC
 
-## -Xms1g -Xmx1g
+### -Xms1g -Xmx1g
 
 > java -Xms1g -Xmx1g -Xloggc:gc.demo.log -XX:+PrintGCDetails -XX:+PrintGCDateStamps GCLogAnalysis
 
@@ -136,11 +136,62 @@ CMS-concurrent-sweep次数明显提升
 
 1. 启动进程
 
-> java -jar -Xmx1g -Xms1g gateway-server-0.0.1-SNAPSHOT.jar
+> java -jar -Xmx1g -Xms1g -XX:+UseSerialGC gateway-server-0.0.1-SNAPSHOT.jar
+
+```
+Running 30s test @ http://localhost:8088/api/hello
+  2 threads and 40 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   628.36us  458.44us  13.80ms   92.82%
+    Req/Sec    27.74k     4.01k   35.45k    74.70%
+  1637100 requests in 30.01s, 195.45MB read
+Requests/sec:  54543.33
+Transfer/sec:      6.51MB
+```
+
+![image-20211114233414067](https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/202111142334151.png)
+
+> java -jar -Xmx1g -Xms1g -XX:+UseParallelGC gateway-server-0.0.1-SNAPSHOT.jar
+
+```
+unning 30s test @ http://localhost:8088/api/hello
+  2 threads and 40 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     4.26ms   19.20ms 179.44ms   95.99%
+    Req/Sec    26.35k     5.46k   34.42k    81.36%
+  1558763 requests in 30.04s, 186.10MB read
+Requests/sec:  51894.04
+Transfer/sec:      6.20MB
+```
+
+![image-20211114233744946](https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/202111142337983.png)
+
+> java -jar -Xmx1g -Xms1g -XX:+UseConcMarkSweepGC gateway-server-0.0.1-SNAPSHOT.jar
+
+```
+Running 30s test @ http://localhost:8088/api/hello
+  2 threads and 40 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     3.18ms   12.75ms 227.02ms   96.03%
+    Req/Sec    19.87k     8.91k   36.64k    67.51%
+  1176940 requests in 30.07s, 140.52MB read
+Requests/sec:  39139.78
+Transfer/sec:      4.67MB
+```
+
+
+
+![image-20211114234009949](https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/202111142340984.png)
+
+> java -jar -Xmx1g -Xms1g -XX:+UseG1GC gateway-server-0.0.1-SNAPSHOT.jar
 
 2. 压测
 
-> wrk -t12 -c400 -d30s http://localhost:8088/api/hello
+> wrk -t12 -c40 -d30s http://localhost:8088/api/hello
 
+3. JvisualVm监测
 
+> https://visualvm.github.io/download.html
+>
+> wrk -c40 -d30s http://localhost:8088/api/hello
 
