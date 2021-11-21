@@ -358,9 +358,49 @@ Transfer/sec:     11.52MB
 
 >  写一段代码，使用 HttpClient 或 OkHttp 访问 [ http://localhost:8801 ](http://localhost:8801/)，代码提交到 GitHub。
 
-**HttpClientDemo**
+## HttpClientDemo
 
-> 
+**导入依赖**
 
+```java
+<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+<dependency>
+    <groupId>org.apache.httpcomponents</groupId>
+    <artifactId>httpclient</artifactId>
+    <version>4.5.13</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
+<dependency>
+    <groupId>org.apache.httpcomponents</groupId>
+    <artifactId>httpcore</artifactId>
+    <version>4.4.14</version>
+</dependency>
+```
 
+**代码地址**
 
+> https://github.com/luffyhub/JavaCourseCodes7/blob/main/02_jvm_io/src/nio_1/httpclient/HttpClientDemo.java
+
+## OkHttpDemo
+
+**导入依赖**
+
+```java
+<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
+<dependency>
+    <groupId>com.squareup.okhttp3</groupId>
+    <artifactId>okhttp</artifactId>
+    <version>4.9.2</version>
+    <!-- 去掉Android的包 -->
+    <exclusions>
+        <exclusion>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+```
+
+**代码地址**
+
+> https://github.com/luffyhub/JavaCourseCodes7/blob/main/02_jvm_io/src/nio_1/httpclient/OkHttpDemo.java
