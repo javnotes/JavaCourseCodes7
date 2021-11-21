@@ -79,13 +79,62 @@ hello,nio2%
 
 > 按照我给大家提示写的 Filter的接口去实现一个 Filter，比如说对于我们所有的请求做一次过滤，添加一个请求头，再发给我们后端的业务服务，例如我们可以给我们的请求头那里边加一个 xjava这是key——kimmking，然后在我们通过HttpClient或者是Okhttp，请求后端的具体的真实的业务服务的时侯，把这个头带进去
 
+现在还在理解老师的代码。
+
+**去掉 log4j 警告**
+
+Run NettyServerApplication：
+
+![](https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/202111220055390.png)
+
+log4j没有配置日志记录的位置，需要配置log4j.properties。以IntelliJ Idea为例，在src下新建一个文件夹，然后新建一个文件log4j.properties。
+
+```properties
+log4j.rootLogger=ERROR
+log4j.appender.CONSOLE = org.apache.log4j.ConsoleAppender 
+log4j.appender.Threshold = DEBUG 
+log4j.appender.CONSOLE.Target = System.out 
+log4j.appender.CONSOLE.layout = org.apache.log4j.PatternLayout 
+log4j.appender.CONSOLE.layout.ConversionPattern = [framework] % d - % c -%- 4r [ % t] %- 5p % c % x - % m % n 
+```
+
+参考链接
+
+> https://blog.csdn.net/m0_37874657/article/details/80536086
+>
+> https://blog.csdn.net/Joseph_Cherry/article/details/77113323
+
+**大体流程**
+
+1. 客户端访问 http://localhost:8888，网关代理 http://localhost:8801 及 http://localhost:8802，
+
+参考链接
+
+>  https://www.cnblogs.com/qdhxhz/p/10234908.html
+
 
 
 ## 题目4
 
 > 让后端可以同时支撑多个业务服务的这种实例，让它们能够做负载均衡
 
-糊里糊涂的，再看看：）
+**路由类**
+
+```java
+// Router：在多个后端业务服务中，找到确定的那个，调用真实的业务服务
+public class RandomHttpEndpointRouter implements HttpEndpointRouter {
+    @Override
+    public String route(List<String> urls) {
+        // 代理的后端地址个数
+        int size = urls.size();
+        Random random = new Random(System.currentTimeMillis());
+        // 根据个数随机代理其中一个服务
+        return urls.get(random.nextInt(size));
+    }
+}
+```
+
+
 
 ## 题目5
 

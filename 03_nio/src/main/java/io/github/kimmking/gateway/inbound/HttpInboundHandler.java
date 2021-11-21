@@ -12,18 +12,19 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+// 对于服务端来说，先 inbound 再 outbound，也对应了 HttpRequestFilter
 public class HttpInboundHandler extends ChannelInboundHandlerAdapter {
 
     private static Logger logger = LoggerFactory.getLogger(HttpInboundHandler.class);
     private final List<String> proxyServer;
     private HttpOutboundHandler handler; // 读取请求数据，处理业务
     private HttpRequestFilter filter = new HeaderHttpRequestFilter();
-    
+
     public HttpInboundHandler(List<String> proxyServer) {
         this.proxyServer = proxyServer;
         this.handler = new HttpOutboundHandler(this.proxyServer);
     }
-    
+
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
         ctx.flush();
@@ -39,12 +40,13 @@ public class HttpInboundHandler extends ChannelInboundHandlerAdapter {
 //            if (uri.contains("/test")) {
 //                handlerTest(fullRequest, ctx);
 //            }
-    
+
             handler.handle(fullRequest, ctx, filter);
-    
-        } catch(Exception e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            // 客户端 channel 已关闭则不转发了
             ReferenceCountUtil.release(msg);
         }
     }

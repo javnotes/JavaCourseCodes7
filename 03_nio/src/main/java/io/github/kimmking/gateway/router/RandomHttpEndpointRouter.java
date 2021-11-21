@@ -6,8 +6,10 @@ import java.util.Random;
 public class RandomHttpEndpointRouter implements HttpEndpointRouter {
     @Override
     public String route(List<String> urls) {
+        // 代理的后端地址个数
         int size = urls.size();
         Random random = new Random(System.currentTimeMillis());
+        // 根据个数随机代理其中一个服务
         return urls.get(random.nextInt(size));
     }
 }

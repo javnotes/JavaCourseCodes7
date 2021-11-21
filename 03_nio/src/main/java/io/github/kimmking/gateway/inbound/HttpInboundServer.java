@@ -20,19 +20,19 @@ import java.util.List;
 // 网关入口
 public class HttpInboundServer {
 
-    private int port;
-    
-    private List<String> proxyServers;
+    private int port; // 客户端请求本机（服务端）端口
+    private List<String> proxyServers; // 后端真实服务地址
 
     public HttpInboundServer(int port, List<String> proxyServers) {
-        this.port=port;
+        this.port = port;
         this.proxyServers = proxyServers;
     }
 
+    // 唯一的自定义方法
     public void run() throws Exception {
 
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerGroup = new NioEventLoopGroup(16);
+        EventLoopGroup bossGroup = new NioEventLoopGroup(1); // 接收客户端请求
+        EventLoopGroup workerGroup = new NioEventLoopGroup(16); // 处理客户端请求
 
         try {
             ServerBootstrap b = new ServerBootstrap();
