@@ -255,10 +255,112 @@ G1 在注重低延迟的同时，吞吐量上面也有很好的表现。
 
 # 题目5
 
-> 运行课上的例子，以及 Netty 的例子，分析相关现象。
+> 运行课上的例子以及 Netty 的例子，分析相关现象。
 
-对Netty暂不了解，入门后补上作业.......
+## 结论
+
+总体上，线程池版本的HTTP服务器的性能，高于多线程版本的，高于单线程版本的。
+
+而使用了Netty的HTTP服务器，在性能上有了巨幅的提升。
+
+|  HTTP服务器  | **单线程** | **多线程** | **线程池** | **Netty** |
+| :----------: | :--------: | :--------: | :--------: | :-------: |
+| Requests/sec |   481.50   |   623.29   |  1732.62   | 112896.21 |
+
+---
+
+下面是操作记录
+
+**配置**
+
+> -Xmx512m -Xms512m
+
+## 对HttpServer01压测
+
+**命令**
+
+> wrk -c40 -d30s http://localhost:8801
+
+**结果**
+
+```bash
+Running 30s test @ http://localhost:8801
+  2 threads and 40 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     2.90ms   10.96ms 235.58ms   98.93%
+    Req/Sec   250.06    184.52     1.12k    73.86%
+  14483 requests in 30.08s, 6.65MB read
+  Socket errors: connect 0, read 355506, write 38, timeout 0
+Requests/sec:    481.50
+Transfer/sec:    226.47KB
+```
+
+## 对HttpServer02压测
+
+**命令**
+
+> wrk -c40 -d30s http://localhost:8802
+
+**结果**
+
+```bash
+Running 30s test @ http://localhost:8802
+  2 threads and 40 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     3.99ms    9.20ms 632.95ms   99.88%
+    Req/Sec   319.67     93.11   555.00     75.94%
+  18742 requests in 30.07s, 6.73MB read
+  Socket errors: connect 0, read 273319, write 84, timeout 0
+Requests/sec:    623.29
+Transfer/sec:    229.21KB
+```
+
+## 对HttpServer03压测
+
+**命令**
+
+> wrk -c40 -d30s http://localhost:8803
+
+**结果**
+
+```bash
+Running 30s test @ http://localhost:8803
+  2 threads and 40 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.66ms    7.50ms 217.66ms   99.44%
+    Req/Sec     0.89k   685.82     2.90k    71.80%
+  52020 requests in 30.02s, 10.69MB read
+  Socket errors: connect 0, read 458875, write 21, timeout 0
+Requests/sec:   1732.62
+Transfer/sec:    364.50KB
+```
+
+## 对Netty Demo压测
+
+**命令**
+
+> wrk -c40 -d30s http://localhost:8808
+
+**结果**
+
+```bash
+Running 30s test @ http://localhost:8808
+  2 threads and 40 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   835.37us    6.69ms 165.12ms   98.98%
+    Req/Sec    56.94k     9.96k   63.35k    89.00%
+  3398793 requests in 30.11s, 346.82MB read
+Requests/sec: 112896.21
+Transfer/sec:     11.52MB
+```
 
 # 题目6
 
 >  写一段代码，使用 HttpClient 或 OkHttp 访问 [ http://localhost:8801 ](http://localhost:8801/)，代码提交到 GitHub。
+
+**HttpClientDemo**
+
+> 
+
+
+
