@@ -15,7 +15,7 @@
 
 本机环境：JDK 8
 
-# 题目1
+# 题目 1
 
 > 使用 GCLogAnalysis.java 自己演练一遍串行 / 并行 /CMS/G1 的案例。
 
@@ -133,7 +133,7 @@ CMS-concurrent-sweep次数明显提升
 
 > java -Xms256m -Xmx256m -Xloggc:gc.demo.log -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+UseG1GC GCLogAnalysis
 
-# 题目2
+# 题目 2
 
 > 使用压测工具（wrk 或 sb），演练 gateway-server-0.0.1-SNAPSHOT.jar 示例。
 
@@ -215,13 +215,13 @@ Transfer/sec:      4.98MB
 
 ![](https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/202111142351785.png)
 
-# 题目3
+# 题目 3
 
 > 如果自己本地有可以运行的项目，可以按照 2 的方式进行演练。
 
 暂时跳过
 
-# 题目4
+# 题目 4
 
 > 根据上述自己对于 1 和 2 的演示，写一段对于不同 GC 和堆内存的总结，提交到 GitHub。
 
@@ -253,7 +253,7 @@ G1 在注重低延迟的同时，吞吐量上面也有很好的表现。
 
 注意的是虽然可以进一步的降低单次的垃圾回收的延迟，但是它的缺点就是在某些条件下有可能会产生FULL GC 进一步的导致 GC 的退化，退化成串行化 GC。
 
-# 题目5
+# 题目 5
 
 > 运行课上的例子以及 Netty 的例子，分析相关现象。
 
@@ -275,7 +275,7 @@ G1 在注重低延迟的同时，吞吐量上面也有很好的表现。
 
 > -Xmx512m -Xms512m
 
-## 对HttpServer01压测
+## 对 HttpServer01 压测
 
 **命令**
 
@@ -295,7 +295,7 @@ Requests/sec:    481.50
 Transfer/sec:    226.47KB
 ```
 
-## 对HttpServer02压测
+## 对 HttpServer02 压测
 
 **命令**
 
@@ -315,7 +315,7 @@ Requests/sec:    623.29
 Transfer/sec:    229.21KB
 ```
 
-## 对HttpServer03压测
+## 对 HttpServer03 压测
 
 **命令**
 
@@ -335,7 +335,7 @@ Requests/sec:   1732.62
 Transfer/sec:    364.50KB
 ```
 
-## 对Netty Demo压测
+## 对 Netty Demo 压测
 
 **命令**
 
@@ -354,7 +354,7 @@ Requests/sec: 112896.21
 Transfer/sec:     11.52MB
 ```
 
-# 题目6
+# 题目 6
 
 >  写一段代码，使用 HttpClient 或 OkHttp 访问 [ http://localhost:8801 ](http://localhost:8801/)，代码提交到 GitHub。
 

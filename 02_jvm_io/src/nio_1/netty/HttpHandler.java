@@ -9,6 +9,11 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.util.ReferenceCountUtil;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaderValues.KEEP_ALIVE;
@@ -36,10 +41,10 @@ public class HttpHandler extends ChannelInboundHandlerAdapter {
             //logger.info("接收到的请求url为{}", uri);
             // 相当于时路由
             if (uri.contains("/test")) {
-                // 相当于是业务处理代码
-                handlerTest(fullRequest, ctx, "hello,kimmking");
+                // 相当于是业务处理代码，再调用后端真实的业务服务
+                handlerTest(fullRequest, ctx, "http://localhost:8801");
             } else { // 非/test的
-                handlerTest(fullRequest, ctx, "hello,others");
+                handlerTest(fullRequest, ctx, "http://localhost:8802");
             }
 
         } catch (Exception e) {
@@ -50,12 +55,23 @@ public class HttpHandler extends ChannelInboundHandlerAdapter {
     }
 
     // 给客户端发送报文
-    private void handlerTest(FullHttpRequest fullRequest, ChannelHandlerContext ctx, String body) {
+    // 对接上次作业的httpclient或者okhttp请求另一个url的响应数据，拿到响应数据并通过value进行返回至前端
+    // 这就相当于代理了我们客户端的求和我们后端的真实的业务服务url
+    private void handlerTest(FullHttpRequest fullRequest, ChannelHandlerContext ctx, String url) {
+
+        String value = null;
+
         // 组装HttpResponse对象
         FullHttpResponse response = null;
-        try {
-            String value = body; // 对接上次作业的httpclient或者okhttp请求另一个url的响应数据
 
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        HttpGet httpGet = new HttpGet(url);
+        CloseableHttpResponse backResponse = null;
+
+        try {
+            backResponse = httpClient.execute(httpGet);
+            // System.out.println(EntityUtils.toString(response.getEntity()));
+            value = EntityUtils.toString(backResponse.getEntity());
 //            httpGet ...  http://localhost:8801
 //            返回的响应，"hello,nio";
 //            value = reponse....

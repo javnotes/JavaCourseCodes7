@@ -24,16 +24,16 @@ public class HttpServer01 {
             // accept()监听要与此Socket建立的连接并接受它。该方法阻塞，直到建立连接;创建一个新的Socket并返回
             Socket socket = null;
             try {
-                System.out.println("服务器监听端口8801中...");
+                System.out.println("[8801]服务器监听端口中...");
                 socket = serverSocket.accept();
-                System.out.println("连接建立了...");
+                System.out.println("[8801]连接建立了...");
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
             service(socket);
-            System.out.println("服务端响应完毕");
-            System.out.println("--------------------------");
+            System.out.println("[8801]服务端响应完毕");
+            System.out.println("[8801]--------------------------");
         }
     }
 

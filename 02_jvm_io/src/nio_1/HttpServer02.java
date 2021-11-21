@@ -17,13 +17,13 @@ public class HttpServer02 {
         ServerSocket serverSocket = new ServerSocket(port);
 
         while (true) {
-            System.out.println("服务器监听端口中...");
+            System.out.println("[8802]服务器监听端口中...");
             final Socket socket = serverSocket.accept();
             new Thread(() -> {
-                System.out.println("服务器开始响应");
+                System.out.println("[8802]服务器开始响应");
                 service(socket);
-                System.out.println("服务器完成响应");
-                System.out.println("-----------------");
+                System.out.println("[8802]服务器完成响应");
+                System.out.println("[8802]-----------------");
             }).start();
         }
     }
