@@ -1,8 +1,8 @@
-package gateway.router;
+package io.github.kimmking.gateway.router;
 
 import java.util.List;
 import java.util.Random;
-
+// Router：在多个后端业务服务中，找到确定的那个，调用真实的业务服务
 public class RandomHttpEndpointRouter implements HttpEndpointRouter {
     @Override
     public String route(List<String> urls) {

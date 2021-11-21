@@ -1,4 +1,4 @@
-package gateway.inbound;
+package io.github.kimmking.gateway.inbound;
 
 import io.github.kimmking.gateway.filter.HeaderHttpRequestFilter;
 import io.github.kimmking.gateway.filter.HttpRequestFilter;
@@ -16,7 +16,7 @@ public class HttpInboundHandler extends ChannelInboundHandlerAdapter {
 
     private static Logger logger = LoggerFactory.getLogger(HttpInboundHandler.class);
     private final List<String> proxyServer;
-    private HttpOutboundHandler handler;
+    private HttpOutboundHandler handler; // 读取请求数据，处理业务
     private HttpRequestFilter filter = new HeaderHttpRequestFilter();
     
     public HttpInboundHandler(List<String> proxyServer) {

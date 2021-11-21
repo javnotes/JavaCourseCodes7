@@ -1,4 +1,4 @@
-package gateway.outbound.httpclient4;
+package io.github.kimmking.gateway.outbound.httpclient4;
 
 
 import io.github.kimmking.gateway.filter.HeaderHttpResponseFilter;
@@ -23,13 +23,16 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.*;
+import java.util.logging.Filter;
 import java.util.stream.Collectors;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.NO_CONTENT;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-
+// 在 OutboundHandler 里面配置了后端的真实的业务服务的URL地址
+// 所有业务请求过来，都直接通过线程池去运行方法fetchGet()
 public class HttpOutboundHandler {
     
     private CloseableHttpAsyncClient httpclient;
@@ -47,6 +50,7 @@ public class HttpOutboundHandler {
         long keepAliveTime = 1000;
         int queueSize = 2048;
         RejectedExecutionHandler handler = new ThreadPoolExecutor.CallerRunsPolicy();//.DiscardPolicy();
+        // 创建线程池
         proxyService = new ThreadPoolExecutor(cores, cores,
                 keepAliveTime, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(queueSize),
                 new NamedThreadFactory("proxyService"), handler);
@@ -63,7 +67,7 @@ public class HttpOutboundHandler {
                 .setDefaultIOReactorConfig(ioConfig)
                 .setKeepAliveStrategy((response,context) -> 6000)
                 .build();
-        httpclient.start();
+        httpclient.start(); // 启动 HttpClient
     }
 
     private String formatUrl(String backend) {
@@ -74,9 +78,11 @@ public class HttpOutboundHandler {
         String backendUrl = router.route(this.backendUrls);
         final String url = backendUrl + fullRequest.uri();
         filter.filter(fullRequest, ctx);
+        // 所有业务请求过来，都直接通过线程池去运行方法fetchGet()
         proxyService.submit(()->fetchGet(fullRequest, ctx, url));
     }
-    
+
+    // 通过 httpClient 执行 httpGet 请求，请求后端真实的业务服务，拿到响应结果数据并分装为body，再把body封装到HttpResponse，再返回给客户端
     private void fetchGet(final FullHttpRequest inbound, final ChannelHandlerContext ctx, final String url) {
         final HttpGet httpGet = new HttpGet(url);
         //httpGet.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_CLOSE);

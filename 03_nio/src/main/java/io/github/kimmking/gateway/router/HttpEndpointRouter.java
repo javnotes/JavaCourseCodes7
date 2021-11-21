@@ -1,4 +1,4 @@
-package gateway.router;
+package io.github.kimmking.gateway.router;
 
 import java.util.List;
 
