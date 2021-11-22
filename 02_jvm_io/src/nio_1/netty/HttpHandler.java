@@ -30,16 +30,17 @@ public class HttpHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    // 可以通过客户端连接 Netty的这个通道里直接读到我们的数据
+    // 可以通过客户端连接 Netty 的这个通道里直接读到我们的数据
     // msg 表示这次请求的所有的数据包装类的这样一个对象，Http协议的报文信息
     // 把msg转型成一个 Httprequest 对象就可以拿到它内部的结构
+    // 请求来了，Netty 就调用这个方法？？？
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         try {
             //logger.info("channelRead流量接口请求开始，时间为{}", startTime);
             FullHttpRequest fullRequest = (FullHttpRequest) msg;
             String uri = fullRequest.uri();
             //logger.info("接收到的请求url为{}", uri);
-            // 相当于时路由
+            // 相当于路由，uri含"/test"才会进行处理
             if (uri.contains("/test")) {
                 // 相当于是业务处理代码，再调用后端真实的业务服务
                 handlerTest(fullRequest, ctx, "http://localhost:8801");

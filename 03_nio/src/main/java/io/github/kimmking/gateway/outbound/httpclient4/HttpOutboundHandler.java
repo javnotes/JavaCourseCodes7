@@ -49,7 +49,7 @@ public class HttpOutboundHandler {
         long keepAliveTime = 1000;
         int queueSize = 2048;
         RejectedExecutionHandler handler = new ThreadPoolExecutor.CallerRunsPolicy();//.DiscardPolicy();丢弃策略
-        // 创建线程池
+        // 使用给定的初始参数创建一个新的线程池 ThreadPoolExecutor
         //     public ThreadPoolExecutor(int corePoolSize,
         //                              int maximumPoolSize,
         //                              long keepAliveTime,
@@ -62,6 +62,10 @@ public class HttpOutboundHandler {
                 keepAliveTime, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(queueSize),
                 new NamedThreadFactory("proxyService"), handler);
 
+        // ConnectTimeout : 连接超时,连接建立时间,三次握手完成时间。
+        // SocketTimeout : 请求超时,数据传输过程中数据包之间间隔的最大时间。
+        // ConnectionRequestTimeout : 使用连接池来管理连接,从连接池获取连接的超时时间。
+        // 配置io线程
         IOReactorConfig ioConfig = IOReactorConfig.custom()
                 .setConnectTimeout(1000)
                 .setSoTimeout(1000)
@@ -78,20 +82,30 @@ public class HttpOutboundHandler {
     }
 
     private String formatUrl(String backend) {
+        // endsWith:测试此字符串是否以指定的后缀结尾。
         return backend.endsWith("/") ? backend.substring(0, backend.length() - 1) : backend;
     }
 
+    // FullHttpRequest：封装http请求，有获取消息体的方法
+    //            FullHttpRequest httpRequest = (FullHttpRequest)msg;
+    //            String path=httpRequest.uri();          //获取路径
+    //            String body = getBody(httpRequest);     //获取参数
+    //            HttpMethod method=httpRequest.method();//获取请求方法
     public void handle(final FullHttpRequest fullRequest, final ChannelHandlerContext ctx, HttpRequestFilter filter) {
-        String backendUrl = router.route(this.backendUrls);
+        System.out.println("handle执行了");
+        String backendUrl = router.route(this.backendUrls); // 返回随机的一个后端服务
         final String url = backendUrl + fullRequest.uri();
-        filter.filter(fullRequest, ctx);
+        filter.filter(fullRequest, ctx); // 该过滤器主要是向请求头中添加信息
         // 所有业务请求过来，都直接通过线程池去运行方法fetchGet()
         proxyService.submit(() -> fetchGet(fullRequest, ctx, url));
     }
 
-    // 通过 httpClient 执行 httpGet 请求，请求后端真实的业务服务，拿到响应结果数据并分装为body，再把body封装到HttpResponse，再返回给客户端
+    // 通过 httpClient 执行 httpGet 请求，请求后端真实的业务服务，拿到响应结果数据并封装为body，再把body封装到HttpResponse，再返回给客户端
+    // url：后端真实服务
     private void fetchGet(final FullHttpRequest inbound, final ChannelHandlerContext ctx, final String url) {
+
         final HttpGet httpGet = new HttpGet(url);
+
         //httpGet.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_CLOSE);
         httpGet.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_KEEP_ALIVE);
         httpGet.setHeader("mao", inbound.headers().get("mao"));
@@ -122,7 +136,7 @@ public class HttpOutboundHandler {
     }
 
     private void handleResponse(final FullHttpRequest fullRequest, final ChannelHandlerContext ctx, final HttpResponse endpointResponse) throws Exception {
-        FullHttpResponse response = null;
+        FullHttpResponse response = null; // 下面组装 HttpResponse
         try {
 //            String value = "hello,kimmking";
 //            response = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.wrappedBuffer(value.getBytes("UTF-8")));
