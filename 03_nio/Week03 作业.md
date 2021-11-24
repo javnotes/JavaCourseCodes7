@@ -72,6 +72,8 @@ hello,nio2%
 ## 题目2
 
 > 使用 Netty 实现后端 HTTP 访问（代替上一步骤）
+>
+> 即使用 Netty做一个 HttpClienti端，而不是用HttpClienta或者okhttp。直接用 Netty创建一个 Client端,去访问后端的业务服务,拿到响应结果。
 
 
 
