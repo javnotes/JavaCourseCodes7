@@ -37,7 +37,13 @@
 
 1. 在 XML 中进行显示配置
 
+   > 
+
 2. 在 Java 代码中显示配置
+
+   > https://github.com/luffyhub/JavaCourseCodes7/tree/main/05_spring01/demo2/src/main/java/com/example/demo2/writing2
+   >
+   > 运行 BeanMain 中 main 方法。
 
 3. 隐式的 Bean 发现机制和自动装配
 
