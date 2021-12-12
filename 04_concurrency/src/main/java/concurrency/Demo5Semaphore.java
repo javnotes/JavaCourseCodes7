@@ -4,6 +4,9 @@ import java.util.concurrent.Semaphore;
 
 /**
  * @description:
+ * Semaphore:可以用来控制同时访问特定资源的线程数量，通过协调各个线程，以保证合理的使用资源。
+ * 通常用于那些资源有明确访问数量限制的场景，常用于限流
+ * Semaphore 先在线程中使用，后在主线程中使用
  * @author: luf
  * @create: 2021-11-28 23:34
  **/
@@ -21,11 +24,15 @@ public class Demo5Semaphore {
         Thread thread = new Thread(() -> {
             try {
                 demo.setValue();
+                System.out.println("set");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
         thread.start();
+
+        // TODO:问题是如何让线程先于此处下一行代码执行
+        Thread.sleep(10);
 
         int result = demo.getValue(); //这是得到的返回值
 
@@ -39,11 +46,13 @@ public class Demo5Semaphore {
         semaphore.acquire();
         value = sum();
         semaphore.release();
+        return;
     }
 
     private int getValue() throws InterruptedException {
+        int result;
         semaphore.acquire();
-        int result = value;
+        result = this.value;
         semaphore.release();
         return result;
     }
