@@ -29,13 +29,13 @@ public class AppTest {
             preparedStatement = connection.prepareStatement(sql);
             long start = currentTimeMillis();
             for (int i = 0; i < 1000000; i++) {
-                preparedStatement.setString(1, "商品" + i);
+                preparedStatement.setString(1, "商品00" + i);
                 preparedStatement.setTimestamp(2, new Timestamp(currentTimeMillis()));
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
             long end = currentTimeMillis();
-            System.out.println("插入百万条数据用时：" + (end - start));
+            System.out.println("插入百万条数据用时：" + (end - start)/1000 + "秒");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

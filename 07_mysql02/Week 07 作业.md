@@ -25,15 +25,21 @@
 
 ## JDBC方式
 
+> https://github.com/luffyhub/JavaCourseCodes7/tree/main/07_mysql02
 
+<img src="https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/image-20211220001737331.png" alt="image-20211220001737331" style="zoom:50%;" />
 
+# 必做题2
 
-
-**9.（必做）**读写分离 - 动态切换数据源版本 1.0
-
+> **读写分离 - 动态切换数据源版本 1.0
+>
 > 基于 Spring Abstractrouting Data Source 的 DataSource
 
+数据库版本：MySQL 8.0.27
 
+## 配置主从数据库
+
+> https://www.vuffy.cn/archives/macpei-zhi-mysql-zhu-cong-shu-ju-ku
 
 
 
