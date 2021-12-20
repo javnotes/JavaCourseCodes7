@@ -39,7 +39,7 @@
 
 ## 配置主从数据库
 
-> https://www.vuffy.cn/archives/macpei-zhi-mysql-zhu-cong-shu-ju-ku
+> https://github.com/luffyhub/JavaCourseCodes7/blob/main/07_mysql02/%E9%85%8D%E7%BD%AEMySQL%E4%B8%BB%E4%BB%8E%E6%95%B0%E6%8D%AE%E5%BA%93.md
 
 
 
