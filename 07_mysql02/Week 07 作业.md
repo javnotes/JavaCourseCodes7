@@ -35,9 +35,9 @@
 >
 > 基于 Spring Abstractrouting Data Source 的 DataSource
 
-数据库版本：MySQL 8.0.27
+1数据库版本：MySQL 8.0.27
 
-## 配置主从数据库
+## 配置主从数复制
 
 > https://www.vuffy.cn/archives/macpei-zhi-mysql-zhu-cong-shu-ju-ku
 

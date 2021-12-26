@@ -205,7 +205,7 @@
   show slave status \G
   ```
 
-  ![image-20211220225724491](https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/image-20211220225724491.png)
+  <img src="https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/image-20211220225724491.png" alt="image-20211220225724491" style="zoom:50%;" />
 
 # 测试
 
@@ -229,9 +229,9 @@
 
   <img src="https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/image-20211220230420525.png" alt="image-20211220230420525" style="zoom:50%;" />
 
-  因为建库、建表、插值语句是在主库中执行的，而在从库中也存在相同的库、表、数据，就证明了主从配置成功。
+  因为建库、建表、插值语句是在主库中执行的，而在从库中也存在相同的库、表、数据，就说明配置主从复制成功。
 
-# 暂停同步
+# 暂停复制
 
 因为配置方式是 bin_log 方式，所以在主库中，暂时关闭bin_log
 
