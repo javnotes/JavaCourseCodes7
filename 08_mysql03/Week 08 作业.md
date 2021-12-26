@@ -89,6 +89,10 @@ CREATE TABLE IF NOT EXISTS demo_ds_1.t_order_15 (order_id BIGINT NOT NULL AUTO_I
 tar zxvf apache-shardingsphere-5.0.0-shardingsphere-proxy-bin.tar.gz
 ```
 
+**引入依赖**
+
+下载 ``mysql-connector-java-8.0.11.jar``，并将其放入 ``ext-lib`` 目录。
+
 ### 配置
 
 **server.yaml**
