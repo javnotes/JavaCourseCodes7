@@ -38,7 +38,6 @@ tar zxvf apache-shardingsphere-5.0.0-alpha-shardingsphere-proxy-bin.tar.gz
 **server.yaml**
 
 ```tex
-
 # governance:
 #  name: governance_ds
 #  registryCenter:
@@ -53,6 +52,7 @@ tar zxvf apache-shardingsphere-5.0.0-alpha-shardingsphere-proxy-bin.tar.gz
 
 authentication:
  users:
+ # 指定 Sharding-Proxy 模拟的 MySQL Server 的用户、密码
    root:
      password: root
 #    sharding:
@@ -71,6 +71,7 @@ props:
  proxy-opentracing-enabled: false
  proxy-hint-enabled: false
  query-with-cipher-column: false
+ # 在窗口中显示 SQL
  sql-show: true
  check-table-metadata-enabled: false
 
@@ -79,9 +80,9 @@ props:
 **config-sharding.yaml**
 
 ```tex
-
+# 逻辑数据库
 schemaName: sharding_db
-
+# 实际数据库的用户、密码
 dataSourceCommon:
  username: root
  password: abc123456
@@ -91,7 +92,7 @@ dataSourceCommon:
  maxPoolSize: 5
  minPoolSize: 1
  maintenanceIntervalMilliseconds: 30000
-
+#实际数据库的信息
 dataSources:
  ds_0:
    url: jdbc:mysql://127.0.0.1:3306/demo_ds_0?serverTimezone=UTC&useSSL=false
@@ -102,6 +103,7 @@ rules:
 - !SHARDING
  tables:
    t_order:
+   #配置了2库16表
      actualDataNodes: ds_${0..1}.t_order_${0..15}
      tableStrategy:
        standard:
@@ -311,7 +313,7 @@ select * from t_order where order_id = 682618449461489665 and user_id = 1;
 [INFO ] 16:07:45.560 [ShardingSphere-Command-8] ShardingSphere-SQL - Actual SQL: ds_1 ::: select * from t_order_1 where order_id = 682618449461489665 and user_id = 1
 ```
 
-## UPDATE
+### UPDATE
 
 ```sql
 update t_order set status = 'fail' where order_id = 682618449461489665 and user_id = 1;
@@ -325,7 +327,7 @@ update t_order set status = 'fail' where order_id = 682618449461489665 and user_
 [INFO ] 16:51:03.975 [ShardingSphere-Command-11] ShardingSphere-SQL - Actual SQL: ds_1 ::: update t_order_1 set status = 'fail' where order_id = 682618449461489665 and user_id = 1
 ```
 
-## DELETE
+### DELETE
 
 ```sql
 delete from t_order where order_id = 682618449461489665;
@@ -342,6 +344,21 @@ delete from t_order where order_id = 682618449461489665;
 
 ## 报错
 
+### CMS
+
+查看启动脚本得知，Sharding-Proxy 指定 GC 为CMS，``-XX:+UseConcMarkSweepGC``，而  CMS GC 在 JDK14 中已被删除
+
+**脚本**
+
+```shell
+java -server -Xmx2g -Xms2g -Xmn1g -Xss256k -XX:+DisableExplicitGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:LargePageSizeInBytes=128m -XX:+UseFastAccessorMethods -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 -Dfile.encoding=UTF-8 -classpath %CLASS_PATH% %MAIN_CLASS%
+```
+
+**参靠链接**
+
+> https://www.javacodegeeks.com/2019/11/jdk-14-cms-gc-is-obe.html
+
+### Cannot create property=authentication for JavaBean=org.apache.shardingsphere.proxy.config.yaml.YamlProxyServerConfiguration@7d9d1a19 in 'reader'
 如果出现下面的错误，是版本用错了。要使用 alpha。
 
 ```tex
@@ -374,4 +391,3 @@ Caused by: org.yaml.snakeyaml.error.YAMLException: Unable to find property 'auth
 	... 11 more
 
 ```
-
