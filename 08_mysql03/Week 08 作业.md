@@ -304,5 +304,5 @@ Caused by: org.yaml.snakeyaml.error.YAMLException: Unable to find property 'auth
 
 # 必做题2
 
-**6.（必做）**基于 hmily TCC 或 ShardingSphere 的 Atomikos XA 实现一个简单的分布式事务应用 demo（二选一），提交到 Github。  
+> **6.（必做）**基于 hmily TCC 或 ShardingSphere 的 Atomikos XA 实现一个简单的分布式事务应用 demo（二选一），提交到 Github。  
 
