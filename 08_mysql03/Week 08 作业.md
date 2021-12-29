@@ -269,6 +269,22 @@ CREATE TABLE IF NOT EXISTS t_order (order_id BIGINT NOT NULL AUTO_INCREMENT, use
 
 ## 报错
 
+### CMS
+
+查看启动脚本得知，Sharding-Proxy 指定 GC 为CMS，``-XX:+UseConcMarkSweepGC``，而  CMS GC 在 JDK14 中已被删除
+
+**脚本**
+
+```shell
+java -server -Xmx2g -Xms2g -Xmn1g -Xss256k -XX:+DisableExplicitGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:LargePageSizeInBytes=128m -XX:+UseFastAccessorMethods -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 -Dfile.encoding=UTF-8 -classpath %CLASS_PATH% %MAIN_CLASS%
+```
+
+**参靠链接**
+
+> https://www.javacodegeeks.com/2019/11/jdk-14-cms-gc-is-obe.html
+
+### Cannot create property=authentication for JavaBean=org.apache.shardingsphere.proxy.config.yaml.YamlProxyServerConfiguration@7d9d1a19 in 'reader'
+
 如果出现下面的错误，是版本用错了。要使用 alpha。
 
 ```tex
