@@ -322,3 +322,29 @@ Caused by: org.yaml.snakeyaml.error.YAMLException: Unable to find property 'auth
 
 > **6.（必做）**基于 hmily TCC 或 ShardingSphere 的 Atomikos XA 实现一个简单的分布式事务应用 demo（二选一），提交到 Github。  
 
+## 环境准备
+
+启动两个 MySQL Server
+
+```sql
+# 登录信息如下
+mysql -h127.0.0.1 -P 3336 -uroot
+mysql -h127.0.0.1 -P 3346 -uroot
+# 建库建表
+create database demo_ds;
+use demo_ds;
+CREATE TABLE IF NOT EXISTS t_order_0 (order_id BIGINT NOT NULL, user_id INT NOT NULL, PRIMARY KEY (order_id));
+CREATE TABLE IF NOT EXISTS t_order_1 (order_id BIGINT NOT NULL, user_id INT NOT NULL, PRIMARY KEY (order_id));
+```
+
+## 代码
+
+
+
+
+
+
+
+## 参考链接
+
+> https://blog.csdn.net/github_35735591/article/details/110734467
