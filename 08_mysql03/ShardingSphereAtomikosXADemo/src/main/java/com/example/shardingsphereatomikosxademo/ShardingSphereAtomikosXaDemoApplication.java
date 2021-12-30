@@ -32,8 +32,9 @@ public class ShardingSphereAtomikosXaDemoApplication {
             // 关闭自动提交
             conn.setAutoCommit(false);
             for (int i = 1; i < 100; i++) {
-                statement.setLong(i, 1);
-                statement.setLong(i, 2);
+                // .setLong：第一个参数，是标明SQL第一个参数，第二个参数才是实际值
+                statement.setLong(1, i);
+                statement.setLong(2, i);
                 statement.executeUpdate();
             }
             conn.commit();
@@ -45,8 +46,8 @@ public class ShardingSphereAtomikosXaDemoApplication {
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             conn.setAutoCommit(false);
             for (int i = 1; i < 11; i++) {
-                statement.setLong(i + 1000, 1);
-                statement.setLong(i + 1000, 2);
+                statement.setLong(1, i + 1000);
+                statement.setLong(2, i + 1000);
                 statement.executeUpdate();
             }
             conn.commit();
@@ -56,13 +57,9 @@ public class ShardingSphereAtomikosXaDemoApplication {
         } finally {
             conn.close();
         }
-<<<<<<< HEAD
 
         System.out.println("First XA inserted successful");
 
-
-=======
->>>>>>> 4f1aef0d6c6515b59c14407f0147e799a7597e83
     }
 
     private static void cleanupTableData(DataSource dataSource) {
