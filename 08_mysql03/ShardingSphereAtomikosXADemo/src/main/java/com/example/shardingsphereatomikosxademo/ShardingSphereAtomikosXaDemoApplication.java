@@ -31,7 +31,7 @@ public class ShardingSphereAtomikosXaDemoApplication {
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             // 关闭自动提交
             conn.setAutoCommit(false);
-            for (int i = 1; i < 100; i++) {
+            for (int i = 1; i < 11; i++) {
                 // .setLong：第一个参数，是标明SQL第一个参数，第二个参数才是实际值
                 statement.setLong(1, i);
                 statement.setLong(2, i);
@@ -46,7 +46,8 @@ public class ShardingSphereAtomikosXaDemoApplication {
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             conn.setAutoCommit(false);
             for (int i = 1; i < 11; i++) {
-                statement.setLong(1, i + 1000);
+                // 制造主键order_id冲突
+                statement.setLong(1, i + 5);
                 statement.setLong(2, i + 1000);
                 statement.executeUpdate();
             }
@@ -57,9 +58,6 @@ public class ShardingSphereAtomikosXaDemoApplication {
         } finally {
             conn.close();
         }
-
-        System.out.println("First XA inserted successful");
-
     }
 
     private static void cleanupTableData(DataSource dataSource) {
@@ -83,12 +81,14 @@ public class ShardingSphereAtomikosXaDemoApplication {
         // .getResource()：查找具有给定名称的资源，返回用于读取资源的 URL 对象
         // .getPath()：获取此 URL 的路径部分
         File yamlFile = new File(ShardingSphereAtomikosXaDemoApplication.class.getClassLoader().getResource(fileName).getPath());
-        System.out.println("****************************");
-        System.out.println(yamlFile.toPath());
-        System.out.println(yamlFile.toString());
-        System.out.println(yamlFile.toURI());
-        System.out.println(yamlFile.getTotalSpace());
-        System.out.println("****************************");
+        //System.out.println("****************************");
+        //// /Users/luf/IdeaProjects/JavaCourseCodes7/08_mysql03/ShardingSphereAtomikosXADemo/target/classes/sharding-config.yml
+        //System.out.println(yamlFile.toPath());
+        //// /Users/luf/IdeaProjects/JavaCourseCodes7/08_mysql03/ShardingSphereAtomikosXADemo/target/classes/sharding-config.yml
+        //System.out.println(yamlFile.toString());
+        //// file:/Users/luf/IdeaProjects/JavaCourseCodes7/08_mysql03/ShardingSphereAtomikosXADemo/target/classes/sharding-config.yml
+        //System.out.println(yamlFile.toURI());
+        //System.out.println("****************************");
         return YamlShardingSphereDataSourceFactory.createDataSource(yamlFile);
     }
 }

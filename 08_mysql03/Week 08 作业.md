@@ -26,7 +26,7 @@ create schema demo_ds_1;
 show schemas;
 ```
 
-<img src="https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/image-20211227001243424-20211227002349522-20211230231349699-20211230231404341.png" alt="image-20211227001243424" style="zoom:50%;" />
+<img src="https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/image-20211227001243424-20211227002349522-20211230231349699-20211230234314171.png" alt="image-20211227001243424" style="zoom:50%;" />
 
 ## 下载 ShardingSphere-Proxy 5.0.0-alpha
 
@@ -188,7 +188,7 @@ rules:
 
 打开 ``start.bat``
 
-![image-20211228144853519](https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/jen9HQFC5I618vP-20211230231349815-20211230231404357.png)
+![image-20211228144853519](https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/jen9HQFC5I618vP-20211230231349815-20211230234314203.png)
 
 可以观察到在窗口提示信息，启动成功。如果未成功，先检查下数据库的连接配置信息。
 
@@ -213,7 +213,7 @@ or register at http://www.atomikos.com/Main/RegisterYourDownload to disable this
 mysql -h 127.0.0.1 -P 3307 -uroot -p
 ```
 
-<img src="https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/FUX8nPH5eiGtw2Q-20211230231349952-20211230231404395.png" style="zoom:50%;" />
+<img src="https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/FUX8nPH5eiGtw2Q-20211230231349952-20211230234314237.png" style="zoom:50%;" />
 
 输入建表语句，让  ``ShardingSphere-Proxy`` 根据先前配置好的规则，自动建表。
 
@@ -223,7 +223,7 @@ use sharding_db;
 CREATE TABLE IF NOT EXISTS t_order (order_id BIGINT NOT NULL AUTO_INCREMENT, user_id INT NOT NULL, status VARCHAR(50), PRIMARY KEY (order_id));
 ```
 
-![image-20211228151112039](https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/RJ7FMZ8nuk2Q6fS-20211230231350122-20211230231404437.png)
+![image-20211228151112039](https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/RJ7FMZ8nuk2Q6fS-20211230231350122-20211230234314297.png)
 
 观察日志，可以得到实际执行的SQL语句。这样，  ``ShardingSphere-Proxy`` 自动在每一个库中，创建了16张表。
 
@@ -375,9 +375,10 @@ public class ShardingSphereAtomikosXaDemoApplication {
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             // 关闭自动提交
             conn.setAutoCommit(false);
-            for (int i = 1; i < 100; i++) {
-                statement.setLong(i, 1);
-                statement.setLong(i, 2);
+            for (int i = 1; i < 11; i++) {
+                // .setLong：第一个参数，是标明SQL第一个参数，第二个参数才是实际值
+                statement.setLong(1, i);
+                statement.setLong(2, i);
                 statement.executeUpdate();
             }
             conn.commit();
@@ -389,8 +390,9 @@ public class ShardingSphereAtomikosXaDemoApplication {
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             conn.setAutoCommit(false);
             for (int i = 1; i < 11; i++) {
-                statement.setLong(i + 1000, 1);
-                statement.setLong(i + 1000, 2);
+                // 制造主键order_id冲突
+                statement.setLong(1, i + 5);
+                statement.setLong(2, i + 1000);
                 statement.executeUpdate();
             }
             conn.commit();
@@ -423,19 +425,25 @@ public class ShardingSphereAtomikosXaDemoApplication {
         // .getResource()：查找具有给定名称的资源，返回用于读取资源的 URL 对象
         // .getPath()：获取此 URL 的路径部分
         File yamlFile = new File(ShardingSphereAtomikosXaDemoApplication.class.getClassLoader().getResource(fileName).getPath());
-        System.out.println("****************************");
-        System.out.println(yamlFile.toPath());
-        System.out.println(yamlFile.toString());
-        System.out.println(yamlFile.toURI());
-        System.out.println(yamlFile.getTotalSpace());
-        System.out.println("****************************");
+        //System.out.println("****************************");
+        //// /Users/luf/IdeaProjects/JavaCourseCodes7/08_mysql03/ShardingSphereAtomikosXADemo/target/classes/sharding-config.yml
+        //System.out.println(yamlFile.toPath());
+        //// /Users/luf/IdeaProjects/JavaCourseCodes7/08_mysql03/ShardingSphereAtomikosXADemo/target/classes/sharding-config.yml
+        //System.out.println(yamlFile.toString());
+        //// file:/Users/luf/IdeaProjects/JavaCourseCodes7/08_mysql03/ShardingSphereAtomikosXADemo/target/classes/sharding-config.yml
+        //System.out.println(yamlFile.toURI());
+        //System.out.println("****************************");
         return YamlShardingSphereDataSourceFactory.createDataSource(yamlFile);
     }
 }
 ```
 
+## TODO
+
+不过貌似有Bug，去查询实际数据库，每个库中，仅有一个表有被数据。
+
 ## 参考链接
 
 > [分布式事务](https://shardingsphere.apache.org/document/legacy/4.x/document/cn/manual/sharding-jdbc/usage/transaction/)
 >
-> [ShardingSphere RAW JDBC 分布式事务XA 代码示例](https://blog.csdn.net/github_35735591/article/details/110734467)
+> [ShardingSphere RAW JDBC 分布式事务XA 代码示例](
