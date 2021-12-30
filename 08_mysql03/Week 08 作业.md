@@ -331,7 +331,7 @@ Caused by: org.yaml.snakeyaml.error.YAMLException: Unable to find property 'auth
 mysql -h127.0.0.1 -P 3336 -uroot
 mysql -h127.0.0.1 -P 3346 -uroot
 # 建库建表
-create database demo_ds;
+create database  ;
 use demo_ds;
 CREATE TABLE IF NOT EXISTS t_order_0 (order_id BIGINT NOT NULL, user_id INT NOT NULL, PRIMARY KEY (order_id));
 CREATE TABLE IF NOT EXISTS t_order_1 (order_id BIGINT NOT NULL, user_id INT NOT NULL, PRIMARY KEY (order_id));

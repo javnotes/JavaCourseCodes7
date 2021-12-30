@@ -35,7 +35,10 @@ public class ShardingSphereAtomikosXaDemoApplication {
             }
             //conn.commit();
         }
+
         System.out.println("First XA inserted successful");
+
+
     }
 
     private static void cleanupData(DataSource dataSource) {
