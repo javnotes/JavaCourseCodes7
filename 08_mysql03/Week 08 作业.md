@@ -347,4 +347,6 @@ CREATE TABLE IF NOT EXISTS t_order_1 (order_id BIGINT NOT NULL, user_id INT NOT 
 
 ## 参考链接
 
-> https://blog.csdn.net/github_35735591/article/details/110734467
+> [分布式事务](https://shardingsphere.apache.org/document/legacy/4.x/document/cn/manual/sharding-jdbc/usage/transaction/)
+>
+> [ShardingSphere RAW JDBC 分布式事务XA 代码示例](https://blog.csdn.net/github_35735591/article/details/110734467)
