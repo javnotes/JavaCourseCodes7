@@ -2,7 +2,7 @@
 > **2.（必做）**设计对前面的订单表数据进行水平分库分表，拆分 2 个库，每个库 16 张表。并在新结构在演示常见的增删改查操作。代码、sql 和配置文件，上传到 Github。  
 > **3.（选做）**模拟 1000 万的订单单表数据，迁移到上面作业 2 的分库分表中。  
 > **4.（选做）**重新搭建一套 4 个库各 64 个表的分库分表，将作业 2 中的数据迁移到新分库。
-> 
+>
 > **5.（选做）**列举常见的分布式事务，简单分析其使用场景和优缺点。  
 > **6.（必做）**基于 hmily TCC 或 ShardingSphere 的 Atomikos XA 实现一个简单的分布式事务应用 demo（二选一），提交到 Github。  
 > **7.（选做）**基于 ShardingSphere narayana XA 实现一个简单的分布式事务 demo。  
@@ -26,7 +26,7 @@ create schema demo_ds_1;
 show schemas;
 ```
 
-<img src="https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/image-20211227001243424-20211227002349522.png" alt="image-20211227001243424" style="zoom:50%;" />
+<img src="https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/image-20211227001243424-20211227002349522-20211230231349699-20211230231404341.png" alt="image-20211227001243424" style="zoom:50%;" />
 
 ## 下载 ShardingSphere-Proxy 5.0.0-alpha
 
@@ -188,7 +188,7 @@ rules:
 
 打开 ``start.bat``
 
-![image-20211228144853519](https://s2.loli.net/2021/12/28/jen9HQFC5I618vP.png)
+![image-20211228144853519](https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/jen9HQFC5I618vP-20211230231349815-20211230231404357.png)
 
 可以观察到在窗口提示信息，启动成功。如果未成功，先检查下数据库的连接配置信息。
 
@@ -213,7 +213,7 @@ or register at http://www.atomikos.com/Main/RegisterYourDownload to disable this
 mysql -h 127.0.0.1 -P 3307 -uroot -p
 ```
 
-<img src="https://s2.loli.net/2021/12/28/FUX8nPH5eiGtw2Q.png" style="zoom:50%;" />
+<img src="https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/FUX8nPH5eiGtw2Q-20211230231349952-20211230231404395.png" style="zoom:50%;" />
 
 输入建表语句，让  ``ShardingSphere-Proxy`` 根据先前配置好的规则，自动建表。
 
@@ -223,7 +223,7 @@ use sharding_db;
 CREATE TABLE IF NOT EXISTS t_order (order_id BIGINT NOT NULL AUTO_INCREMENT, user_id INT NOT NULL, status VARCHAR(50), PRIMARY KEY (order_id));
 ```
 
-![image-20211228151112039](https://s2.loli.net/2021/12/28/RJ7FMZ8nuk2Q6fS.png)
+![image-20211228151112039](https://vuffy.oss-cn-shenzhen.aliyuncs.com/img/RJ7FMZ8nuk2Q6fS-20211230231350122-20211230231404437.png)
 
 观察日志，可以得到实际执行的SQL语句。这样，  ``ShardingSphere-Proxy`` 自动在每一个库中，创建了16张表。
 
@@ -331,7 +331,7 @@ Caused by: org.yaml.snakeyaml.error.YAMLException: Unable to find property 'auth
 mysql -h127.0.0.1 -P 3336 -uroot
 mysql -h127.0.0.1 -P 3346 -uroot
 # 建库建表
-create database  ;
+create database demo_ds;
 use demo_ds;
 CREATE TABLE IF NOT EXISTS t_order_0 (order_id BIGINT NOT NULL, user_id INT NOT NULL, PRIMARY KEY (order_id));
 CREATE TABLE IF NOT EXISTS t_order_1 (order_id BIGINT NOT NULL, user_id INT NOT NULL, PRIMARY KEY (order_id));
@@ -339,12 +339,103 @@ CREATE TABLE IF NOT EXISTS t_order_1 (order_id BIGINT NOT NULL, user_id INT NOT 
 
 ## 代码
 
+> https://github.com/luffyhub/JavaCourseCodes7/blob/main/08_mysql03/ShardingSphereAtomikosXADemo/src/main/java/com/example/shardingsphereatomikosxademo/ShardingSphereAtomikosXaDemoApplication.java
 
+```java
+package com.example.shardingsphereatomikosxademo;
 
+import org.apache.shardingsphere.driver.api.yaml.YamlShardingSphereDataSourceFactory;
+import org.apache.shardingsphere.transaction.core.TransactionType;
+import org.apache.shardingsphere.transaction.core.TransactionTypeHolder;
 
+import javax.sql.DataSource;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 
+/**
+ * @author luf
+ */
+public class ShardingSphereAtomikosXaDemoApplication {
+    public static void main(String[] args) throws IOException, SQLException {
+        // 获取数据源，dataSource的类型为ShardingDataSource
+        DataSource dataSource = getShardingDatasource();
+        // 清空t_order表数据
+        cleanupTableData(dataSource);
+        // 支持TransactionType.LOCAL, TransactionType.XA, TransactionType.BASE
+        TransactionTypeHolder.set(TransactionType.XA);
 
+        Connection conn = dataSource.getConnection();
+        String sql = "insert into t_order (order_id, user_id) VALUES (?, ?);";
+
+        System.out.println("The first XA starts to execute");
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            // 关闭自动提交
+            conn.setAutoCommit(false);
+            for (int i = 1; i < 100; i++) {
+                statement.setLong(i, 1);
+                statement.setLong(i, 2);
+                statement.executeUpdate();
+            }
+            conn.commit();
+        }
+        System.out.println("The first XA is executed successfully");
+
+        System.out.println("The second XA starts to execute");
+        // 表t_order的主键为 order_id
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(false);
+            for (int i = 1; i < 11; i++) {
+                statement.setLong(i + 1000, 1);
+                statement.setLong(i + 1000, 2);
+                statement.executeUpdate();
+            }
+            conn.commit();
+        } catch (Exception e) {
+            System.out.println("The second XA failed to execute successfully");
+            conn.rollback();
+        } finally {
+            conn.close();
+        }
+    }
+
+    private static void cleanupTableData(DataSource dataSource) {
+        System.out.println("Delete all data...");
+        try (Connection conn = dataSource.getConnection(); Statement statement = conn.createStatement()) {
+            statement.execute("delete from t_order;");
+            conn.commit();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        System.out.println("Delete all data successful");
+    }
+
+    /**
+     * 生成DataSource，注意文件路径
+     */
+    static private DataSource getShardingDatasource() throws IOException, SQLException {
+        String fileName = "sharding-config.yml";
+        // File：文件和目录路径名的抽象表示。此类的实例可能表示也可能不表示实际的文件系统对象，例如文件或目录。
+        //File 类的实例是不可变的；也就是说，一旦创建，由 File 对象表示的抽象路径名将永远不会改变
+        // .getResource()：查找具有给定名称的资源，返回用于读取资源的 URL 对象
+        // .getPath()：获取此 URL 的路径部分
+        File yamlFile = new File(ShardingSphereAtomikosXaDemoApplication.class.getClassLoader().getResource(fileName).getPath());
+        System.out.println("****************************");
+        System.out.println(yamlFile.toPath());
+        System.out.println(yamlFile.toString());
+        System.out.println(yamlFile.toURI());
+        System.out.println(yamlFile.getTotalSpace());
+        System.out.println("****************************");
+        return YamlShardingSphereDataSourceFactory.createDataSource(yamlFile);
+    }
+}
+```
 
 ## 参考链接
 
-> https://blog.csdn.net/github_35735591/article/details/110734467
+> [分布式事务](https://shardingsphere.apache.org/document/legacy/4.x/document/cn/manual/sharding-jdbc/usage/transaction/)
+>
+> [ShardingSphere RAW JDBC 分布式事务XA 代码示例](https://blog.csdn.net/github_35735591/article/details/110734467)
